@@ -1,8 +1,20 @@
-from url_builder import UrlBuilder
+import requests
+from datetime import datetime
+from url_builder.url_builder import UrlBuilder
 
 
 if __name__ == '__main__':
+    now: datetime = datetime.now()
     url_builder: UrlBuilder = UrlBuilder()
-    for i in range(10):
-        print(url_builder.raw_url)
-        url_builder += 1
+    url_builder._set_all_params(
+        year=2026,
+        month=1,
+        number=2355,
+    )
+
+    try:
+        while url_builder <= now:
+            print(url_builder.get_url())
+            url_builder += 1
+    except requests.exceptions.RequestException:
+        print("All URLs built!")
