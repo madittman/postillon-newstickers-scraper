@@ -27,55 +27,16 @@ class UrlBuilder:
         ]
     )
 
-    def __lt__(self, obj: object) -> bool:
-        """Compare datetime to URL's year and month."""
-        if not isinstance(obj, datetime):
-            return False
-        if self._get_year() < obj.year:
-            return True
-        if self._get_month() < obj.month:
-            return True
-        return False
-
     def __le__(self, obj: object) -> bool:
         """Compare datetime to URL's year and month."""
         if not isinstance(obj, datetime):
             return False
-        if self._get_year() <= obj.year:
-            return True
-        if self._get_month() <= obj.month:
-            return True
-        return False
-
-    def __eq__(self, obj: object) -> bool:
-        """Compare datetime to URL's year and month."""
-        if not isinstance(obj, datetime):
-            return False
-        if self._get_year() == obj.year:
-            return True
-        if self._get_month() == obj.month:
-            return True
-        return False
-
-    def __ge__(self, obj: object) -> bool:
-        """Compare datetime to URL's year and month."""
-        if not isinstance(obj, datetime):
-            return False
-        if self._get_year() >= obj.year:
-            return True
-        if self._get_month() >= obj.month:
-            return True
-        return False
-
-    def __gt__(self, obj: object) -> bool:
-        """Compare datetime to URL's year and month."""
-        if not isinstance(obj, datetime):
-            return False
         if self._get_year() > obj.year:
-            return True
-        if self._get_month() > obj.month:
-            return True
-        return False
+            return False
+        elif self._get_year() == obj.year:
+            if self._get_month() > obj.month:
+                return False
+        return True
 
     def _get_year(self) -> int:
         """Return year from URL."""
@@ -84,10 +45,6 @@ class UrlBuilder:
     def _get_month(self) -> int:
         """Return month from URL."""
         return int(self.url_parts[4])
-
-    def _get_number(self) -> int:
-        """Return newsticker's number from URL."""
-        return int(self.url_parts[7])
 
     def _set_year(self, year: int) -> None:
         """Set year in URL."""
@@ -101,11 +58,11 @@ class UrlBuilder:
         self.url_parts[4] = _month
 
     def _set_number(self, number: int) -> None:
-        """Set newsticker's number in URL."""
+        """Set newsticker number in URL."""
         self.url_parts[7] = str(number)
 
     def _set_all_params(self, year: int, month: int, number: int) -> None:
-        """Set year, month, newsticker's name and newsticker's number in URL."""
+        """Set year, month, and newsticker number in URL."""
         self._set_year(year)
         self._set_month(month)
         self._set_number(number)
@@ -123,10 +80,14 @@ class UrlBuilder:
         except requests.exceptions.RequestException:
             return False
 
+    def get_number(self) -> int:
+        """Return newsticker number from URL."""
+        return int(self.url_parts[7])
+
     def get_url(self) -> Union[str, None]:
         """Return the whole URL."""
-        # Return the hardcoded URL if there is one for the newsticker's number
-        number: int = self._get_number()
+        # Return the hardcoded URL if there is one for the newsticker number
+        number: int = self.get_number()
         if number in SPECIAL_URLS:
             return SPECIAL_URLS[number]
 
@@ -136,10 +97,10 @@ class UrlBuilder:
         return url
 
     def increment_number(self) -> Self:
-        """Increment newsticker's number to URL and validate it."""
+        """Increment newsticker number to URL and validate it."""
         year: int = self._get_year()
         month: int = self._get_month()
-        number: int = self._get_number()
+        number: int = self.get_number()
         number += 1
         self._set_number(number)
 
