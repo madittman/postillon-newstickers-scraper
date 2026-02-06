@@ -9,16 +9,15 @@ from url_json_dumper.url_json_dumper import UrlJsonDumper
 if __name__ == "__main__":
     now: datetime = datetime.now()
     url_builder: UrlBuilder = UrlBuilder()
-    url_builder._set_all_params(  # ONLY for testing
-        year=2021,
-        month=12,
-        number=1742,
+    url_builder.set_all_params(
+        year=2017,
+        month=9,
+        number=1103,
     )
 
     # All URLs in the format <newsticker number, URL>
     urls: dict[int, Union[str, None]] = {}
     try:
-        now = datetime(2022, 5, 1)  # ONLY for testing
         while url_builder <= now:
             newsticker_number: int = url_builder.get_number()
             urls[newsticker_number] = url_builder.get_url()

@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+from time import sleep
 from typing import Union
 
 import requests
@@ -61,12 +62,6 @@ class UrlBuilder:
         """Set newsticker number in URL."""
         self.url_parts[7] = str(number)
 
-    def _set_all_params(self, year: int, month: int, number: int) -> None:
-        """Set year, month, and newsticker number in URL."""
-        self._set_year(year)
-        self._set_month(month)
-        self._set_number(number)
-
     def _is_url_valid(self) -> bool:
         """Check if set URL is valid."""
         url: Union[str, None] = self.get_url()
@@ -96,6 +91,12 @@ class UrlBuilder:
             url += url_part
         return url
 
+    def set_all_params(self, year: int, month: int, number: int) -> None:
+        """Set year, month, and newsticker number in URL."""
+        self._set_year(year)
+        self._set_month(month)
+        self._set_number(number)
+
     def increment_number(self) -> Self:
         """Increment newsticker number to URL and validate it."""
         year: int = self._get_year()
@@ -113,7 +114,7 @@ class UrlBuilder:
                 year += 1
 
         # Set all parameters for new URL
-        self._set_all_params(
+        self.set_all_params(
             year=year,
             month=month,
             number=number,
