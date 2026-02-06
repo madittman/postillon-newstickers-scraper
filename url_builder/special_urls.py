@@ -2,8 +2,8 @@
 Some URLs don't follow the rules, so they are kept in a dictionary.
 A None entry means there was no newsticker with that number.
 """
-from typing import Union
 
+from typing import Union
 
 SPECIAL_URLS: dict[int, Union[str, None]] = {
     1: "https://www.der-postillon.com/2009/02/newstickernewstickernewsti.html",
