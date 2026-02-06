@@ -7,8 +7,11 @@ def test_url_builder() -> None:
     # Assert default parameters
     assert _url_builder._get_year() == 2009
     assert _url_builder._get_month() == 2
-    assert _url_builder._get_number() == 2
-    assert _url_builder.get_url() == "https://www.der-postillon.com/2009/02/newsticker-2.html"
+    assert _url_builder._get_number() == 1
+    assert (
+        _url_builder.get_url()
+        == "https://www.der-postillon.com/2009/02/newstickernewstickernewsti.html"
+    )
 
     # Assert set parameters
     _url_builder._set_all_params(
@@ -19,10 +22,16 @@ def test_url_builder() -> None:
     assert _url_builder._get_year() == 2023
     assert _url_builder._get_month() == 5
     assert _url_builder._get_number() == 5000
-    assert _url_builder.get_url() == "https://www.der-postillon.com/2023/05/newsticker-5000.html"
+    assert (
+        _url_builder.get_url()
+        == "https://www.der-postillon.com/2023/05/newsticker-5000.html"
+    )
 
     # Assert some special URLs
     _url_builder._set_number(60)
-    assert _url_builder.get_url() == "https://www.der-postillon.com/2010/04/newsticker-60_05.html"
+    assert (
+        _url_builder.get_url()
+        == "https://www.der-postillon.com/2010/04/newsticker-60_05.html"
+    )
     _url_builder._set_number(71)
     assert _url_builder.get_url() is None
