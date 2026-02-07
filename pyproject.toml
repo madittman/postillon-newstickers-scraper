@@ -4,13 +4,20 @@ version = "0.1.0"
 description = " scrape all Postillon's newstickers from all newsticker's sites."
 requires-python = ">=3.13"
 dependencies = [
+    "beautifulsoup4>=4.14.3",
     "isort>=7.0.0",
+    "opencv-python>=4.13.0.92",
+    "pillow>=12.1.0",
+    "pytesseract>=0.3.13",
     "pytest>=9.0.2",
     "requests>=2.32.5",
     "setuptools>=81.0.0",
     "types-setuptools>=80.10.0.20260124",
     "typing-extensions (>=4.15.0,<5.0.0)",
 ]
+
+[system-requirements]
+tesseract-ocr-deu = "*"
 
 [dependency-groups]
 dev = [

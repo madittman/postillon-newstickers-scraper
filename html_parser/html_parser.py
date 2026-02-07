@@ -1,54 +1,45 @@
 import json
-import requests
 import re
+from dataclasses import dataclass, field
+
+import requests
 from bs4 import BeautifulSoup
-from dataclasses import dataclass
 
 
 @dataclass
 class HtmlParser:
-    urls: dict[int, str]
+    """Class for extracting newstickers from URLs."""
 
-    def read_json(self):
-        """Load the JSON file 'urls.json'."""
+    urls: dict[int, str] = field(
+        init=False
+    )  # All URLs in the format <newsticker number, URL>
+
+    def __post_init__(self) -> None:
+        """Set self.urls by loading the JSON file 'urls.json'."""
         with open("urls.json", "r", encoding="utf-8") as json_file:
-            self.urls: dict[int, str] = json.load(json_file)
+            self.urls = json.load(json_file)
 
-    def parse_url(self):
-        # 1. Fetch the webpage content
-        url = "https://www.der-postillon.com/2017/09/newsitcker-1104.html"
-        response = requests.get(url)
+    @staticmethod
+    def _parse_url(url: str) -> list[str]:
+        """Parse the URL and return the extracted newstickers."""
+        newstickers: list[str] = []
+        response: requests.models.Response = requests.get(url)
+        soup: BeautifulSoup = BeautifulSoup(response.content, "html.parser")
 
-        # 2. Parse the HTML
-        soup = BeautifulSoup(response.content, 'html.parser')
+        # Match everything between '+++'
+        segments: list[str] = re.findall(r"\+\+\+.*?\+\+\+", soup.get_text())
+        for segment in segments:
+            if len(segment.split()) <= 3:  # Only one word can't be a newsticker
+                continue
+            newstickers.append(segment)
 
-        # 3. Locate the main article content
-        # Der Postillon uses Blogger, so the content is usually in a div with class 'post-body'
-        content_div = soup.find('div', class_='post-body')
+        # Output the results
+        for _newsticker in newstickers:
+            print(_newsticker)
+        print()
 
-        if content_div:
-            # Get the text from the div
-            text = content_div.get_text()
+        return newstickers
 
-            # 4. Extract sentences between +++
-            # We use a regex to find text between +++ delimiters.
-            # The pattern matches '+++' followed by non-greedy content until the next '+++'
-            # We strip whitespace to clean up the results.
-
-            # Method A: Using Split (Simple and handles shared delimiters like +++ A +++ B +++)
-            raw_segments = text.split('+++')
-
-            # Filter and clean the segments
-            sentences = []
-            for segment in raw_segments:
-                clean_segment = segment.strip()
-                # Filter out empty strings and short fragments (like navigation artifacts)
-                if len(clean_segment) > 10:
-                    sentences.append(clean_segment)
-
-            # Output the results
-            for i, sentence in enumerate(sentences, 1):
-                print(f"{i}: {sentence}")
-
-        else:
-            print("Could not find the content area.")
+    def parse_urls(self) -> None:
+        for number, url in self.urls.items():
+            self._parse_url(url)
