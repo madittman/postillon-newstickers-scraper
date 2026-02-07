@@ -1,4 +1,5 @@
 # created by virtualenv automatically
+*.egg-info/
 .venv/
 .idea/
 .pytest_cache/

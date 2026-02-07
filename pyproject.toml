@@ -1,10 +1,14 @@
 [project]
 name = "postillon-newstickers-scraper"
 version = "0.1.0"
-description = "Add your description here"
+description = " scrape all Postillon's newstickers from all newsticker's sites."
 requires-python = ">=3.13"
 dependencies = [
+    "isort>=7.0.0",
+    "pytest>=9.0.2",
     "requests>=2.32.5",
+    "setuptools>=81.0.0",
+    "types-setuptools>=80.10.0.20260124",
     "typing-extensions (>=4.15.0,<5.0.0)",
 ]
 
