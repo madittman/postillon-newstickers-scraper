@@ -11,11 +11,11 @@ def url_builder() -> UrlBuilder:
     return UrlBuilder()
 
 
-def test_lower_equal(url_builder) -> None:
+def test_lower_equal(url_builder: UrlBuilder) -> None:
     assert url_builder <= datetime(2020, 1, 1)
 
 
-def test_default_params(url_builder) -> None:
+def test_default_params(url_builder: UrlBuilder) -> None:
     assert url_builder._get_year() == 2009
     assert url_builder._get_month() == 2
     assert url_builder.get_number() == 1
@@ -25,7 +25,7 @@ def test_default_params(url_builder) -> None:
     )
 
 
-def test_set_params(url_builder) -> None:
+def test_set_params(url_builder: UrlBuilder) -> None:
     url_builder.set_all_params(
         year=2023,
         month=5,
@@ -40,7 +40,7 @@ def test_set_params(url_builder) -> None:
     )
 
 
-def test_some_special_urls(url_builder) -> None:
+def test_some_special_urls(url_builder: UrlBuilder) -> None:
     url_builder._set_number(60)
     assert (
         url_builder.get_url()
@@ -50,7 +50,7 @@ def test_some_special_urls(url_builder) -> None:
     assert url_builder.get_url() is None  # Newsticker 71 doesn't exist
 
 
-def test_is_url_valid(url_builder) -> None:
+def test_is_url_valid(url_builder: UrlBuilder) -> None:
     assert url_builder._is_url_valid() is True
     url_builder.set_all_params(
         year=0,
@@ -60,7 +60,7 @@ def test_is_url_valid(url_builder) -> None:
     assert url_builder._is_url_valid() is False
 
 
-def test_increment_number(url_builder) -> None:
+def test_increment_number(url_builder: UrlBuilder) -> None:
     url_builder.increment_number()
     assert url_builder._get_year() == 2009
     assert url_builder._get_month() == 2
