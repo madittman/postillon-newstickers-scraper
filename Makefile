@@ -1,9 +1,10 @@
-all: remove_build_folder install_libs run_code_checkers
+all: remove_build_folder run_pip run_code_checkers
 
 remove_build_folder:
 	rm -rf build/
 
-install_libs:
+run_pip:
+	pip install --upgrade pip
 	uv run pip install -e .
 
 run_code_checkers:
