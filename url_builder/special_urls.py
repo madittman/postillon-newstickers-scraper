@@ -3,9 +3,8 @@ Some URLs don't follow the rules, so they are kept in a dictionary.
 A None entry means there was no newsticker with that number.
 """
 
-from typing import Union
 
-SPECIAL_URLS: dict[int, Union[str, None]] = {
+SPECIAL_URLS: dict[int, str|None] = {
     1: "https://www.der-postillon.com/2009/02/newstickernewstickernewsti.html",
     39: "https://www.der-postillon.com/2009/12/weihnachts-newsticker-39.html",
     45: "https://www.der-postillon.com/2010/01/berufsrisiko-newsticker-45.html",
@@ -24,7 +23,11 @@ SPECIAL_URLS: dict[int, Union[str, None]] = {
     1141: "https://www.der-postillon.com/2017/12/newsticker-1141-weihnachtsspezialausgabe.html",
     1290: "https://www.der-postillon.com/2018/12/newsticker-1290_28.html",
     1742: "https://www.der-postillon.com/2021/12/newsticker-1742-weihnachtsausgabe.html",
-    1796: None,  # Somehow newsticker 1796 has number 1795 in URL and newsticker 1795 doesn't exist
+
+    # Somehow newsticker 1796 has number 1795 in URL and newsticker 1795 doesn't exist
+    1795: None,
+    1796: "https://www.der-postillon.com/2022/05/newsticker-1795.html",
+
     1869: "https://www.der-postillon.com/2022/10/newsticker-1869-halloween-spezialausgabe.html",
     2039: "https://www.der-postillon.com/2023/12/newsticker-2039-weihnachtsausgabe.html",
     2339: "https://www.der-postillon.com/2025/12/newsticker-2339-weihnachtsspezialausgabe.html",
