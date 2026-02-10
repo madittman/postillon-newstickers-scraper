@@ -1,5 +1,5 @@
 """
-Build all URLs with UrlBuilder and dump to JSON file with UrlJsonDumper.
+Build all URLs with UrlBuilder and dump to JSON file with UrlsToJsonDumper.
 """
 
 from datetime import datetime
@@ -34,5 +34,5 @@ except (
 
 # Dump URLs to JSON file 'urls.json'
 url_json_dumper: UrlsToJsonDumper = UrlsToJsonDumper(urls=urls)
-url_json_dumper.dump_urls()
+url_json_dumper.dump_urls("urls.json")
 print("All URLs dumped to JSON file!")
