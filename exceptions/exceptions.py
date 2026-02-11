@@ -13,3 +13,7 @@ class NoValidDateFoundError(Exception):
 class NoNewstickerFoundError(Exception):
     """Raised when no newsticker was found on newsticker's website."""
     pass
+
+class NoValidImageFoundError(Exception):
+    """Raised when image from newsticker's website could not be parsed."""
+    pass
