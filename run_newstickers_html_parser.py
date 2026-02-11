@@ -6,7 +6,6 @@ import json
 
 from newstickers_parsers.newstickers_html_parser import NewstickersHtmlParser
 
-
 with open("urls.json", "r", encoding="utf-8") as json_file:
     urls: dict[str, str] = json.load(json_file)
 
