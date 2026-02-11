@@ -4,7 +4,7 @@ A None entry means there was no newsticker with that number.
 """
 
 
-SPECIAL_URLS: dict[int, str|None] = {
+SPECIAL_URLS: dict[int, str | None] = {
     1: "https://www.der-postillon.com/2009/02/newstickernewstickernewsti.html",
     39: "https://www.der-postillon.com/2009/12/weihnachts-newsticker-39.html",
     45: "https://www.der-postillon.com/2010/01/berufsrisiko-newsticker-45.html",

@@ -62,7 +62,7 @@ class UrlBuilder:
 
     def _is_url_valid(self) -> bool:
         """Check if set URL is valid."""
-        url: str|None = self.get_url()
+        url: str | None = self.get_url()
         if url is None:
             # None is treated as a valid URL which means the URL doesn't exist
             return True
@@ -77,7 +77,7 @@ class UrlBuilder:
         """Return newsticker number from URL."""
         return int(self.url_parts[7])
 
-    def get_url(self) -> str|None:
+    def get_url(self) -> str | None:
         """Return the whole URL."""
         # Return the hardcoded URL if there is one for the newsticker number
         number: int = self.get_number()
