@@ -18,7 +18,7 @@ url_builder.set_all_params(  # Adjust parameters to set where to start from
 )
 
 # urls is a dict in the format <newsticker number, URL>
-urls: dict[int, str|None] = {}
+urls: dict[int, str | None] = {}
 
 # Build all URLs
 try:
