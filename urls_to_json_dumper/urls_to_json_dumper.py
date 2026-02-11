@@ -7,7 +7,7 @@ class UrlsToJsonDumper:
     """Class for dumping all valid URL's from UrlBuilder to a JSON file."""
 
     # urls is a dict in the format <newsticker number, URL>
-    urls: dict[int, str|None]
+    urls: dict[int, str | None]
 
     def _remove_none_values(self) -> None:
         """Remove all non-existent URLs."""

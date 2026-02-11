@@ -5,7 +5,7 @@ import pytest
 
 from urls_to_json_dumper.urls_to_json_dumper import UrlsToJsonDumper
 
-URLS: dict[int, str|None] = {
+URLS: dict[int, str | None] = {
     1: "https://www.der-postillon.com/2009/02/newstickernewstickernewsti.html",
     2: "https://www.der-postillon.com/2009/02/newsticker-2.html",
     71: None,
@@ -32,13 +32,13 @@ def test_dump_urls(urls_to_json_dumper: UrlsToJsonDumper) -> None:
 
     with open(filename, "r", encoding="utf-8") as json_file:
         loaded_urls: dict[str, str] = json.load(json_file)
-        expected_urls: dict[int, str | None] = URLS.copy()
-        del expected_urls[71]  # Remove None entry
+        copied_urls: dict[int, str | None] = URLS.copy()
+        del copied_urls[71]  # Remove None entry
 
         # The loaded JSON file only contains strings
-        expected_urls: dict[str, str] = {str(k): v for k, v in expected_urls.items()}
+        expected_urls: dict[str, str | None] = {str(k): v for k, v in copied_urls.items()}
 
         assert loaded_urls == expected_urls
 
-    # Delete the created JSON file
+    # Delete the created JSON file to leave directory as before
     file_path.unlink(missing_ok=True)
