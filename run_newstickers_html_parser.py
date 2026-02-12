@@ -2,6 +2,7 @@
 Run NewstickersHtmlParser to extract the newstickers from a URL.
 This requires a stored urls.json to load the URLs from!
 """
+
 import json
 
 from newstickers_parsers.newstickers_html_parser import NewstickersHtmlParser

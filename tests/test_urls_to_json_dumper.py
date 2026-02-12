@@ -14,15 +14,18 @@ URLS: dict[int, str | None] = {
     2358: "https://www.der-postillon.com/2026/02/newsticker-2358.html",
 }
 
+
 @pytest.fixture
 def urls_to_json_dumper() -> UrlsToJsonDumper:
     return UrlsToJsonDumper(urls=URLS)
+
 
 def test_remove_none_values(urls_to_json_dumper: UrlsToJsonDumper) -> None:
     urls_to_json_dumper._remove_none_values()
     expected_urls: dict[int, str | None] = URLS.copy()
     del expected_urls[71]  # Remove None entry
     assert urls_to_json_dumper.urls == expected_urls
+
 
 def test_dump_urls(urls_to_json_dumper: UrlsToJsonDumper) -> None:
     filename: str = "test_urls.json"
@@ -36,7 +39,9 @@ def test_dump_urls(urls_to_json_dumper: UrlsToJsonDumper) -> None:
         del copied_urls[71]  # Remove None entry
 
         # The loaded JSON file only contains strings
-        expected_urls: dict[str, str | None] = {str(k): v for k, v in copied_urls.items()}
+        expected_urls: dict[str, str | None] = {
+            str(k): v for k, v in copied_urls.items()
+        }
 
         assert loaded_urls == expected_urls
 

@@ -18,10 +18,14 @@ class NewstickersHtmlParser(NewstickersParser):
         """Return the extracted newstickers from self.soup as a list of strings."""
 
         # Match everything between '+++'
-        newsticker_strings: list[str] = re.findall(r"\+\+\+.*?\+\+\+", self.soup.get_text())
+        newsticker_strings: list[str] = re.findall(
+            r"\+\+\+.*?\+\+\+", self.soup.get_text()
+        )
 
         # Only one word can't be a newsticker
-        newsticker_strings = [nt_str for nt_str in newsticker_strings if len(nt_str.split()) > 3]
+        newsticker_strings = [
+            nt_str for nt_str in newsticker_strings if len(nt_str.split()) > 3
+        ]
 
         # Raise error if no newsticker was found
         if len(newsticker_strings) == 0:

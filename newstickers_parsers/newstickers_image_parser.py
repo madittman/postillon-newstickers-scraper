@@ -7,8 +7,8 @@ import numpy as np
 import pytesseract  # type: ignore
 import requests
 from bs4 import Tag
-from PIL import Image, ImageOps
 from bs4.element import AttributeValueList
+from PIL import Image, ImageOps
 from requests import Response
 
 from exceptions.exceptions import NoValidImageFoundError
@@ -30,17 +30,23 @@ class NewstickersImageParser(NewstickersParser):
         # Find the <a> tag that wraps the image
         image_tag_wrapper: Tag | None = self.soup.find("a", attrs={"imageanchor": "1"})
         if not image_tag_wrapper:
-            raise NoValidImageFoundError(f"Image tag wrapper from URL '{self.url}' could not be parsed")
+            raise NoValidImageFoundError(
+                f"Image tag wrapper from URL '{self.url}' could not be parsed"
+            )
 
         # Extract the actual <img> tag inside it
         image_tag: Tag | None = image_tag_wrapper.find("img")
         if not image_tag:
-            raise NoValidImageFoundError(f"Image tag from URL '{self.url}' could not be parsed")
+            raise NoValidImageFoundError(
+                f"Image tag from URL '{self.url}' could not be parsed"
+            )
 
         # If image width is less than or equal to 1, it's not a newsticker image
         image_width: str | AttributeValueList | None = image_tag.get("width")
         if not isinstance(image_width, str):
-            raise NoValidImageFoundError(f"Image width from URL '{self.url}' could not be parsed")
+            raise NoValidImageFoundError(
+                f"Image width from URL '{self.url}' could not be parsed"
+            )
 
         if int(str(image_width)) <= 1:
             return None
@@ -57,7 +63,9 @@ class NewstickersImageParser(NewstickersParser):
             return None
         image_url: str | AttributeValueList | None = image_tag.get("src")
         if not isinstance(image_url, str):
-            raise NoValidImageFoundError(f"Image URL from URL '{self.url}' could not be parsed")
+            raise NoValidImageFoundError(
+                f"Image URL from URL '{self.url}' could not be parsed"
+            )
 
         # Download the image data
         response: Response = requests.get(image_url)
@@ -86,7 +94,9 @@ class NewstickersImageParser(NewstickersParser):
         pattern: str = r"\+{1,3}"  # Exactly 1, 2, or 3 pluses
         for idx, part in enumerate(raw_text_parts):
             if bool(re.fullmatch(pattern, part)):  # Hit start of newsticker
-                del raw_text_parts[:idx + 1]  # Remove everything before including the pluses
+                del raw_text_parts[
+                    : idx + 1
+                ]  # Remove everything before including the pluses
                 break
         clean_text_parts: list[str] = ["+++"]
         for part in raw_text_parts:  # Traverse words after start of newsticker
@@ -115,7 +125,10 @@ class NewstickersImageParser(NewstickersParser):
 
         # First and last part must be exactly 1, 2, or 3 pluses
         pattern: str = r"\+{1,3}"
-        if not (bool(re.fullmatch(pattern, newsticker_parts[0])) and bool(re.fullmatch(pattern, newsticker_parts[-1]))):
+        if not (
+            bool(re.fullmatch(pattern, newsticker_parts[0]))
+            and bool(re.fullmatch(pattern, newsticker_parts[-1]))
+        ):
             return False
 
         # Search for colon
@@ -142,7 +155,10 @@ class NewstickersImageParser(NewstickersParser):
         image_extraction_invalid: bool = False
         if not self._is_newsticker_valid(newsticker_string):
             image_extraction_invalid = True
-            print(f"Image text {newsticker_string} from URL {self.url} is invalid", file=sys.stderr)
+            print(
+                f"Image text {newsticker_string} from URL {self.url} is invalid",
+                file=sys.stderr,
+            )
 
         return Newsticker(
             text=newsticker_string,
