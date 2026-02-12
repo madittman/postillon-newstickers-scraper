@@ -106,9 +106,9 @@ class NewstickersImageParser(NewstickersParser):
             clean_text_parts.append(part)
 
         # Concatenate cleaned text parts
-        newsticker_string: str = ""
-        for part in clean_text_parts:
-            newsticker_string += part + " "
+        newsticker_string: str = clean_text_parts[0]
+        for part in clean_text_parts[1:]:
+            newsticker_string += " " + part
 
         return newsticker_string
 
@@ -156,7 +156,7 @@ class NewstickersImageParser(NewstickersParser):
         if not self._is_newsticker_valid(newsticker_string):
             image_extraction_invalid = True
             print(
-                f"Image text {newsticker_string} from URL {self.url} is invalid",
+                f"Image text {newsticker_string} from URL {self.url} could not be properly recognized",
                 file=sys.stderr,
             )
 

@@ -1,4 +1,8 @@
 """Hard code all expected variables for testing here."""
+from datetime import datetime
+
+from models.newsticker import Newsticker
+from models.newstickers_website import NewstickersWebsite
 
 EXPECTED_NEWSTICKER_STRINGS_BY_WEBSITE: dict[str, list[str]] = {
     "Newsticker (1).html": [
@@ -51,10 +55,34 @@ EXPECTED_NEWSTICKER_STRINGS_BY_WEBSITE: dict[str, list[str]] = {
     ],
 }
 
-EXPECTED_IMAGE_FILENAME_BY_FILENAME: dict[str, str | None] = {
-    "Newsticker (1).html": "faulespack.webp",
-    "Newsticker (2).html": "clowns.webp",
+EXPECTED_IMAGE_PATH_BY_WEBSITE: dict[str, str | None] = {
+    "Newsticker (1).html": "Newsticker (1)_files/faulespack.webp",
+    "Newsticker (2).html": "Newsticker (2)_files/clowns.webp",
     "Newsticker (500) - XXL-Edition (10+6).html": None,  # No Image on newsticker's website
-    "Newsticker (1652).html": "tickerhibär_orig.webp",
-    "Newsticker (2358).html": "tickerkeininder2.webp",
+    "Newsticker (1652).html": "Newsticker (1652)_files/tickerhibär_orig.webp",
+    "Newsticker (2358).html": "Newsticker (2358)_files/tickerkeininder2.webp",
+}
+
+
+
+def get_expected_newsticker_by_website(website: str) -> Newsticker:
+    match website:
+        case "Newsticker (1).html":
+            return Newsticker(
+                text="+++ Faules Pack: Fast 300.000 Deutsche in Kurzarbeit +++",
+                newstickers_website=NewstickersWebsite(
+                    number=1,
+                    title="Newsticker (1)",
+                    date=datetime.date(2009, 2, 4),
+                    url=website,
+                ),
+                extracted_from_image=True,
+                image_extraction_invalid=False,
+    ),
+
+
+
+    "Newsticker (2).html": "Newsticker (2)_files/clowns.webp",
+    "Newsticker (1652).html": "Newsticker (1652)_files/tickerhibär_orig.webp",
+    "Newsticker (2358).html": "Newsticker (2358)_files/tickerkeininder2.webp",
 }
