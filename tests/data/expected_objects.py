@@ -1,5 +1,7 @@
-"""Hard code all expected variables for testing here."""
-from datetime import datetime
+"""Hard code all expected objects and variables for testing here."""
+
+import os
+from datetime import date
 
 from models.newsticker import Newsticker
 from models.newstickers_website import NewstickersWebsite
@@ -64,25 +66,60 @@ EXPECTED_IMAGE_PATH_BY_WEBSITE: dict[str, str | None] = {
 }
 
 
+def expected_newsticker_by_website(website: str, data_path: str) -> Newsticker | None:
+    """Return expected Newsticker object by website."""
 
-def get_expected_newsticker_by_website(website: str) -> Newsticker:
+    # The mocked URL is the full path of the HTML file
+    full_file_path: str = os.path.join(data_path, "websites", website)
+
+    text: str
+    number: int
+    title: str
+    _date: date
+    image_extraction_invalid: bool
+
     match website:
         case "Newsticker (1).html":
-            return Newsticker(
-                text="+++ Faules Pack: Fast 300.000 Deutsche in Kurzarbeit +++",
-                newstickers_website=NewstickersWebsite(
-                    number=1,
-                    title="Newsticker (1)",
-                    date=datetime.date(2009, 2, 4),
-                    url=website,
-                ),
-                extracted_from_image=True,
-                image_extraction_invalid=False,
-    ),
+            text = "+++ Faules Pack: Fast 300.000 Deutsche in Kurzarbeit +++"
+            number = 1
+            title = "Newsticker (1)"
+            _date = date(2009, 2, 4)
+            image_extraction_invalid = False
 
+        case "Newsticker (2).html":
+            text = "+++ Schluss mit lustig: Gewerkschaft der Clowns will endlich ernstgenommen werden. +++"
+            number = 2
+            title = "Newsticker (2)"
+            _date = date(2009, 2, 9)
+            image_extraction_invalid = False
 
+        case "Newsticker (1652).html":
+            text = "+++ Hi, Bär! Hi, Bär! Scooter besucht Raubtiere im Zoo +++"
+            number = 1652
+            title = "Newsticker (1652)"
+            _date = date(2021, 5, 17)
 
-    "Newsticker (2).html": "Newsticker (2)_files/clowns.webp",
-    "Newsticker (1652).html": "Newsticker (1652)_files/tickerhibär_orig.webp",
-    "Newsticker (2358).html": "Newsticker (2358)_files/tickerkeininder2.webp",
-}
+            # This image's text extraction is invalid because it misses the colon in the middle
+            image_extraction_invalid = True
+
+        case "Newsticker (2358).html":
+            text = "+++ Kein Inder Hesse: Einbürgerung in Frankfurt wird von Südasiaten nicht in Anspruch genommen +++"
+            number = 2358
+            title = "Newsticker (2358)"
+            _date = date(2026, 2, 6)
+            image_extraction_invalid = False
+
+        case _:
+            return None
+
+    return Newsticker(
+        text=text,
+        newstickers_website=NewstickersWebsite(
+            number=number,
+            title=title,
+            date=_date,
+            url=full_file_path,
+        ),
+        extracted_from_image=True,
+        image_extraction_invalid=image_extraction_invalid,
+    )

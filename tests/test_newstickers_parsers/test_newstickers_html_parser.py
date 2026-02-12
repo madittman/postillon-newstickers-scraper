@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from models.newstickers_website import NewstickersWebsite
 from newstickers_parsers.newstickers_html_parser import NewstickersHtmlParser
-from tests.data.newsticker_strings import EXPECTED_NEWSTICKER_STRINGS_BY_WEBSITE
+from tests.data.expected_objects import EXPECTED_NEWSTICKER_STRINGS_BY_WEBSITE
 
 # Construct the full path to the testing files
 TESTS_PATH: str = str(Path(__file__).parent.parent)
