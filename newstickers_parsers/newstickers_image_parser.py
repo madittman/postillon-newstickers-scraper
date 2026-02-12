@@ -1,30 +1,88 @@
 import re
-from dataclasses import dataclass, field
+import sys
+from dataclasses import dataclass
+from io import BytesIO
 
 import numpy as np
 import pytesseract  # type: ignore
-from PIL import Image, ImageFile, ImageOps
+import requests
+from bs4 import Tag
+from PIL import Image, ImageOps
+from bs4.element import AttributeValueList
+from requests import Response
+
+from exceptions.exceptions import NoValidImageFoundError
+from models.newsticker import Newsticker
+from models.newstickers_website import NewstickersWebsite
+from newstickers_parsers.newstickers_parser import NewstickersParser
 
 
 @dataclass
-class NewstickersImageParser:
+class NewstickersImageParser(NewstickersParser):
     """Class for recognizing and extracting the newsticker from the image on the newsticker's website."""
 
-    image: ImageFile.ImageFile
-    raw_text: str = field(init=False)
+    def _get_image_tag(self) -> Tag | None:
+        """
+        Find and return the <img> tag from the newsticker's website.
+        If no valid image tag is found, return None.
+        """
 
-    def __post_init__(self) -> None:
+        # Find the <a> tag that wraps the image
+        image_tag_wrapper: Tag | None = self.soup.find("a", attrs={"imageanchor": "1"})
+        if not image_tag_wrapper:
+            raise NoValidImageFoundError(f"Image tag wrapper from URL '{self.url}' could not be parsed")
+
+        # Extract the actual <img> tag inside it
+        image_tag: Tag | None = image_tag_wrapper.find("img")
+        if not image_tag:
+            raise NoValidImageFoundError(f"Image tag from URL '{self.url}' could not be parsed")
+
+        # If image width is less than or equal to 1, it's not a newsticker image
+        image_width: str | AttributeValueList | None = image_tag.get("width")
+        if not isinstance(image_width, str):
+            raise NoValidImageFoundError(f"Image width from URL '{self.url}' could not be parsed")
+
+        if int(str(image_width)) <= 1:
+            return None
+
+        return image_tag
+
+    def _get_image(self) -> Image.Image | None:
         """
-        Set the image and invert it for better text recognition.
-        After inversion, the text is black on white.
+        Return the image from the newsticker's website as a PIL Image object.
+        Raise error if image URL could not be parsed.
         """
-        inverted_image: Image.Image = ImageOps.invert(self.image)
+        image_tag: Tag | None = self._get_image_tag()
+        if not image_tag:
+            return None
+        image_url: str | AttributeValueList | None = image_tag.get("src")
+        if not isinstance(image_url, str):
+            raise NoValidImageFoundError(f"Image URL from URL '{self.url}' could not be parsed")
+
+        # Download the image data
+        response: Response = requests.get(image_url)
+
+        # Raise error for 4xx or 5xx responses
+        response.raise_for_status()
+
+        # Convert raw bytes into a PIL Image object
+        # (BytesIO creates a file-like object in memory that PIL can read)
+        return Image.open(BytesIO(response.content))
+
+    @staticmethod
+    def _get_raw_text_from_image(image: Image.Image) -> str:
+        """Read and return the newsticker's raw text from the image."""
+
+        # Invert the image for better text recognition.
+        # After inversion, the text is black on white.
+        inverted_image: Image.Image = ImageOps.invert(image)
         image_array = np.array(inverted_image)
-        self.raw_text: str = pytesseract.image_to_string(image_array, lang="deu")
+        return pytesseract.image_to_string(image_array, lang="deu")
 
-    def extract_newsticker(self) -> str:
-        """Return only the clean newsticker within '+++'."""
-        raw_text_parts: list[str] = self.raw_text.split()
+    @staticmethod
+    def _get_newsticker_string(raw_text: str) -> str:
+        """Return only the clean newsticker within '+++' from the raw text."""
+        raw_text_parts: list[str] = raw_text.split()
         pattern: str = r"\+{1,3}"  # Exactly 1, 2, or 3 pluses
         for idx, part in enumerate(raw_text_parts):
             if bool(re.fullmatch(pattern, part)):  # Hit start of newsticker
@@ -38,13 +96,14 @@ class NewstickersImageParser:
             clean_text_parts.append(part)
 
         # Concatenate cleaned text parts
-        result: str = ""
+        newsticker_string: str = ""
         for part in clean_text_parts:
-            result += part + " "
-        return result
+            newsticker_string += part + " "
+
+        return newsticker_string
 
     @staticmethod
-    def is_newsticker_valid(newsticker: str) -> bool:
+    def _is_newsticker_valid(newsticker: str) -> bool:
         """
         Return True if the newsticker is valid, False otherwise.
         A valid newsticker must have the following format:
@@ -68,3 +127,26 @@ class NewstickersImageParser:
             return False
 
         return True
+
+    def get_newsticker(self) -> Newsticker | None:
+        """Return the Newsticker object or return None if no valid image is found."""
+        newstickers_website: NewstickersWebsite = self._get_newstickers_website()
+        image: Image.Image | None = self._get_image()
+        if not image:
+            return None
+
+        raw_text: str = self._get_raw_text_from_image(image)
+        newsticker_string: str = self._get_newsticker_string(raw_text)
+
+        # Set 'image_extraction_invalid' to True and print error message when newsticker could not be read properly
+        image_extraction_invalid: bool = False
+        if not self._is_newsticker_valid(newsticker_string):
+            image_extraction_invalid = True
+            print(f"Image text {newsticker_string} from URL {self.url} is invalid", file=sys.stderr)
+
+        return Newsticker(
+            text=newsticker_string,
+            newstickers_website=newstickers_website,
+            extracted_from_image=True,
+            image_extraction_invalid=image_extraction_invalid,
+        )

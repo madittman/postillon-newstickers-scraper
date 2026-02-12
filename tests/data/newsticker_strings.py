@@ -1,7 +1,7 @@
-"""Set all hardcoded newstickers here."""
+"""Hard code all expected variables for testing here."""
 
 
-NEWSTICKER_STRINGS_BY_FILENAME: dict[str, list[str]] = {
+EXPECTED_NEWSTICKER_STRINGS_BY_WEBSITE: dict[str, list[str]] = {
     "Newsticker (1).html": [
         '+++ Faules Pack: Fast 300.000 Deutsche in Kurzarbeit +++',
         '+++ Özdemir fordert Kopftuchverbot für attraktive Türkinnen +++',
@@ -50,4 +50,12 @@ NEWSTICKER_STRINGS_BY_FILENAME: dict[str, list[str]] = {
         '+++ Der Bastian: Schweinsteiger jobbt in fränkischer Brillenwerkstatt +++',
         '+++ Hamsterkäufe nehmen zu: Zoohandlung beschränkt Abgabe auf haushaltsübliche Mengen +++',
     ]
+}
+
+EXPECTED_IMAGE_FILENAME_BY_FILENAME: dict[str, str | None] = {
+    "Newsticker (1).html": "faulespack.webp",
+    "Newsticker (2).html": "clowns.webp",
+    "Newsticker (500) - XXL-Edition (10+6).html": None,  # No Image on newsticker's website
+    "Newsticker (1652).html": "tickerhibär_orig.webp",
+    "Newsticker (2358).html": "tickerkeininder2.webp",
 }

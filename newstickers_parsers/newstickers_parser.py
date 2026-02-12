@@ -6,7 +6,9 @@ from datetime import date, datetime
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from exceptions.exceptions import NoPostBodyDivFoundError, NoValidDateFoundError, NoValidTitleFoundError
+from exceptions.exceptions import (NoPostBodyDivFoundError,
+                                   NoValidDateFoundError,
+                                   NoValidTitleFoundError)
 from models.newstickers_website import NewstickersWebsite
 
 
