@@ -33,7 +33,7 @@ class NewstickersParser(ABC):
         self.soup: BeautifulSoup = BeautifulSoup(response.content, "html.parser")
         if not self.soup.find("div", class_="post-body"):
             raise NoPostBodyDivFoundError(
-                f"Could not find the 'post-body' div from URL '{self.url}'"
+                f"Could not find the 'post-body' <div> tag from URL '{self.url}'"
             )
 
     def _get_title_string(self) -> str:

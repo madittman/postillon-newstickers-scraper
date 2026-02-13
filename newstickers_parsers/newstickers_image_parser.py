@@ -27,22 +27,27 @@ class NewstickersImageParser(NewstickersParser):
         If no valid image tag is found, return None.
         """
 
+        # Find the <div> tag that wraps the image
+        div_tag: Tag | None = self.soup.find("div", class_="separator")
+        if not div_tag:
+            return None
+
         # Find the <a> tag that wraps the image
-        image_tag_wrapper: Tag | None = self.soup.find("a", attrs={"imageanchor": "1"})
-        if not image_tag_wrapper:
+        a_tag: Tag | None = div_tag.find("a")
+        if not a_tag:
             raise NoValidImageFoundError(
-                f"Image tag wrapper from URL '{self.url}' could not be parsed"
+                f"<a> tag from URL '{self.url}' could not be parsed"
             )
 
-        # Extract the actual <img> tag inside it
-        image_tag: Tag | None = image_tag_wrapper.find("img")
-        if not image_tag:
+        # Extract the actual <img> tag inside the <a> tag
+        img_tag: Tag | None = a_tag.find("img")
+        if not img_tag:
             raise NoValidImageFoundError(
-                f"Image tag from URL '{self.url}' could not be parsed"
+                f"<img> tag from URL '{self.url}' could not be parsed"
             )
 
         # If image width is less than or equal to 1, it's not a newsticker image
-        image_width: str | AttributeValueList | None = image_tag.get("width")
+        image_width: str | AttributeValueList | None = img_tag.get("width")
         if not isinstance(image_width, str):
             raise NoValidImageFoundError(
                 f"Image width from URL '{self.url}' could not be parsed"
@@ -51,7 +56,7 @@ class NewstickersImageParser(NewstickersParser):
         if int(str(image_width)) <= 1:
             return None
 
-        return image_tag
+        return img_tag
 
     def _get_image(self) -> Image.Image | None:
         """
@@ -156,7 +161,7 @@ class NewstickersImageParser(NewstickersParser):
         if not self._is_newsticker_valid(newsticker_string):
             image_extraction_invalid = True
             print(
-                f"Image text {newsticker_string} from URL {self.url} could not be properly recognized",
+                f"Image text '{newsticker_string}' from URL '{self.url}' could not be properly recognized",
                 file=sys.stderr,
             )
 

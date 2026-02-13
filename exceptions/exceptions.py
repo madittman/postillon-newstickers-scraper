@@ -1,5 +1,5 @@
 class NoPostBodyDivFoundError(Exception):
-    """Raised when 'post-body' div could not be found on newsticker's website."""
+    """Raised when 'post-body' <div> tag could not be found on newsticker's website."""
 
     pass
 
