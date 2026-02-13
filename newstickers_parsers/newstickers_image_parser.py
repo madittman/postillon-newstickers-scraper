@@ -90,6 +90,8 @@ class NewstickersImageParser(NewstickersParser):
         # After inversion, the text is black on white.
         inverted_image: Image.Image = ImageOps.invert(image)
         image_array = np.array(inverted_image)
+
+        # Read text from inverted image
         return pytesseract.image_to_string(image_array, lang="deu")
 
     @staticmethod
@@ -118,13 +120,15 @@ class NewstickersImageParser(NewstickersParser):
         return newsticker_string
 
     @staticmethod
-    def _is_newsticker_valid(newsticker: str) -> bool:
+    def _is_newsticker_string_valid(newsticker_string: str) -> bool:
         """
         Return True if the newsticker is valid, False otherwise.
         A valid newsticker must have the following format:
             +++ <part1> <part2> ... <partN>: <partN+1> <partN+2> ... +++
         """
-        newsticker_parts: list[str] = newsticker.split()
+
+        # Newsticker string must consist of at least 3 parts (+++, word, +++)
+        newsticker_parts: list[str] = newsticker_string.split()
         if len(newsticker_parts) < 3:
             return False
 
@@ -144,6 +148,37 @@ class NewstickersImageParser(NewstickersParser):
         else:  # Invalid if no colon found
             return False
 
+        # Check for unallowed symbols
+        unallowed_symbols: list[str] = [
+            "#",
+            "$",
+            "&",
+            "(",
+            ")",
+            "*",
+            "+",
+            "/",
+            "<",
+            "=",
+            ">",
+            "@",
+            "[",
+            "\\",
+            "]",
+            "^",
+            "_",
+            "`",
+            "{",
+            "|",
+            "}",
+            "~",
+        ]
+        for symbol in unallowed_symbols:
+            # Only look for a symbol in the parts between '+++'
+            for newsticker_part in newsticker_parts[1:-1]:
+                if symbol in newsticker_part:
+                    return False
+
         return True
 
     def get_newsticker(self) -> Newsticker | None:
@@ -158,10 +193,12 @@ class NewstickersImageParser(NewstickersParser):
 
         # Set 'image_extraction_invalid' to True and print error message when newsticker could not be read properly
         image_extraction_invalid: bool = False
-        if not self._is_newsticker_valid(newsticker_string):
+        if not self._is_newsticker_string_valid(newsticker_string):
             image_extraction_invalid = True
             print(
-                f"Image text '{newsticker_string}' from URL '{self.url}' could not be properly recognized",
+                "> The following image text could not be properly recognized:\n"
+                + f"'{newsticker_string}'\n"
+                + f"from URL '{self.url}'\n",
                 file=sys.stderr,
             )
 
