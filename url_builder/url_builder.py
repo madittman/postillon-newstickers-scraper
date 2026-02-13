@@ -37,6 +37,19 @@ class UrlBuilder:
                 return False
         return True
 
+    @staticmethod
+    def _is_url_valid(url: str | None) -> bool:
+        """Check whether the passed URL is valid."""
+        if url is None:
+            # None is treated as a valid URL which means the URL doesn't exist
+            return True
+        try:
+            response: requests.models.Response = requests.get(url)
+            response.raise_for_status()  # Raise error for 4xx or 5xx responses
+            return True
+        except requests.exceptions.RequestException:
+            return False
+
     def _get_year(self) -> int:
         """Return year from URL."""
         return int(self.url_parts[2])
@@ -59,19 +72,6 @@ class UrlBuilder:
     def _set_number(self, number: int) -> None:
         """Set newsticker number in URL."""
         self.url_parts[7] = str(number)
-
-    def _is_url_valid(self) -> bool:
-        """Check if set URL is valid."""
-        url: str | None = self.get_url()
-        if url is None:
-            # None is treated as a valid URL which means the URL doesn't exist
-            return True
-        try:
-            response: requests.models.Response = requests.get(url)
-            response.raise_for_status()  # Raise error for 4xx or 5xx responses
-            return True
-        except requests.exceptions.RequestException:
-            return False
 
     def get_number(self) -> int:
         """Return newsticker number from URL."""
@@ -104,7 +104,7 @@ class UrlBuilder:
         self._set_number(number)
 
         # Check if URL with increased number is valid, otherwise increase month
-        if not self._is_url_valid():
+        if not self._is_url_valid(self.get_url()):
             if month < 12:
                 month += 1
             else:
@@ -119,7 +119,7 @@ class UrlBuilder:
         )
 
         # Raise error if new URL is not valid
-        if not self._is_url_valid():
+        if not self._is_url_valid(self.get_url()):
             raise requests.exceptions.RequestException(f"Invalid URL: {self.get_url()}")
 
         return self
