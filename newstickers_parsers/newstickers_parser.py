@@ -59,7 +59,7 @@ class NewstickersParser(ABC):
 
         # The inner (\d+) captures just the number into group 1
         match: re.Match[str] | None = re.search(r"\((\d+)\)", title_string)
-        if match is None:
+        if not match:
             raise NoValidTitleFoundError(
                 f"Title '{title_string}' from URL '{self.url}' could not be parsed"
             )
