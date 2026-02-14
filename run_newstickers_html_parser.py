@@ -1,13 +1,14 @@
 """
 Run NewstickersHtmlParser to extract the newstickers from a URL.
-This requires a stored urls.json to load the URLs from!
+This requires a stored JSON file to load the URLs from!
 """
 
 import json
 
 from newstickers_parsers.newstickers_html_parser import NewstickersHtmlParser
 
-with open("urls.json", "r", encoding="utf-8") as json_file:
+JSON_FILE: str = "urls.json"
+with open(JSON_FILE, "r", encoding="utf-8") as json_file:
     urls: dict[str, str] = json.load(json_file)
 
 # ONLY for testing
