@@ -31,11 +31,11 @@ class NewstickersHtmlParser(NewstickersParser):
         if len(newsticker_strings) == 0:
             raise NoNewstickerFoundError(f"No newsticker found on URL '{self.url}'")
 
-        # Remove the newsticker that was found from the 'ticker-content' div
+        # Remove the newsticker that was found from the 'ticker-content' <div> tag
         # as it doesn't belong to the newsticker's website.
-        ticker_content_div: Tag | None = self.soup.find("div", id="ticker-content")
-        if ticker_content_div:
-            ticker_content_newsticker: str = str(ticker_content_div.string)
+        ticker_content_div_tag: Tag | None = self.soup.find("div", id="ticker-content")
+        if ticker_content_div_tag:
+            ticker_content_newsticker: str = str(ticker_content_div_tag.string)
             if ticker_content_newsticker in newsticker_strings:
                 newsticker_strings.remove(ticker_content_newsticker)
 
