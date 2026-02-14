@@ -34,5 +34,6 @@ except (
 
 # Dump URLs to JSON file 'urls.json'
 url_json_dumper: UrlsToJsonDumper = UrlsToJsonDumper(urls=urls)
-url_json_dumper.dump_urls("urls.json")
-print("All URLs dumped to JSON file!")
+json_file: str = "urls.json"
+url_json_dumper.dump_urls(json_file)
+print(f"All URLs dumped to JSON file '{json_file}'!")

@@ -13,7 +13,7 @@ with open("urls.json", "r", encoding="utf-8") as json_file:
 # ONLY for testing
 for number, url in urls.items():
     newstickers_html_parser: NewstickersHtmlParser = NewstickersHtmlParser(url=url)
-    print()
-    print(url)
+    print(f"URL: {url}")
     for newsticker in newstickers_html_parser.get_next_newsticker():
-        print(newsticker)
+        print(f"Newsticker: {newsticker}")
+    print()

@@ -15,6 +15,6 @@ with open("urls.json", "r", encoding="utf-8") as json_file:
 for number, url in urls.items():
     newstickers_image_parser: NewstickersImageParser = NewstickersImageParser(url=url)
     newsticker: Newsticker | None = newstickers_image_parser.get_newsticker()
-    print(url)
-    print(newsticker)
+    print(f"URL: {url}")
+    print(f"Newsticker: {newsticker}")
     print()
