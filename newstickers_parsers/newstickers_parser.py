@@ -1,4 +1,6 @@
 import re
+import sys
+import time
 from abc import ABC
 from dataclasses import dataclass, field
 from datetime import date, datetime
@@ -25,7 +27,19 @@ class NewstickersParser(ABC):
 
     def __post_init__(self) -> None:
         """Call URL and set BeautifulSoup object."""
+        back_off: int = 5
         response: requests.models.Response = requests.get(self.url)
+
+        # Sleep for an increasing amount of seconds if there have been too many requests for the URL
+        while response.status_code == 429:
+            response = requests.get(self.url)
+            print(
+                f"> Too many requests for URL '{self.url}'\n"
+                + f"Sleeping for {back_off} seconds...\n",
+                file=sys.stderr,
+            )
+            time.sleep(back_off)
+            back_off *= 2
 
         # Raise error for 4xx or 5xx responses
         response.raise_for_status()
@@ -45,8 +59,8 @@ class NewstickersParser(ABC):
             )
         title_string: str = str(title.string)
 
-        # Raise error if title doesn't match the format 'Newsticker (<number>) .*'
-        pattern: str = r"^Newsticker\s\(\d+\).*"
+        # Raise error if title doesn't match the format 'word1-word2-...-wordN (<number>).*'
+        pattern: str = r"^[\w-]+ \(\d+\).*"
         if not re.fullmatch(pattern, title_string):
             raise NoValidTitleFoundError(
                 f"Title '{title}' from URL '{self.url}' does not match format 'Newsticker (<number>) .*"
