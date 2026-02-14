@@ -37,42 +37,6 @@ class UrlBuilder:
                 return False
         return True
 
-    @staticmethod
-    def _is_url_valid(url: str | None) -> bool:
-        """Check whether the passed URL is valid."""
-        if url is None:
-            # None is treated as a valid URL which means the URL doesn't exist
-            return True
-        try:
-            response: requests.models.Response = requests.get(url)
-            response.raise_for_status()  # Raise error for 4xx or 5xx responses
-            return True
-        except requests.exceptions.RequestException:
-            return False
-
-    def _get_year(self) -> int:
-        """Return year from URL."""
-        return int(self.url_parts[2])
-
-    def _get_month(self) -> int:
-        """Return month from URL."""
-        return int(self.url_parts[4])
-
-    def _set_year(self, year: int) -> None:
-        """Set year in URL."""
-        self.url_parts[2] = str(year)
-
-    def _set_month(self, month: int) -> None:
-        """Set month in URL (month always has two digits)."""
-        _month: str = str(month)
-        if len(_month) == 1:  # Add '0' if month has only one digit
-            _month = "0" + _month
-        self.url_parts[4] = _month
-
-    def _set_number(self, number: int) -> None:
-        """Set newsticker number in URL."""
-        self.url_parts[7] = str(number)
-
     def get_number(self) -> int:
         """Return newsticker number from URL."""
         return int(self.url_parts[7])
@@ -123,3 +87,39 @@ class UrlBuilder:
             raise requests.exceptions.RequestException(f"Invalid URL: {self.get_url()}")
 
         return self
+
+    def _get_year(self) -> int:
+        """Return year from URL."""
+        return int(self.url_parts[2])
+
+    def _get_month(self) -> int:
+        """Return month from URL."""
+        return int(self.url_parts[4])
+
+    def _set_year(self, year: int) -> None:
+        """Set year in URL."""
+        self.url_parts[2] = str(year)
+
+    def _set_month(self, month: int) -> None:
+        """Set month in URL (month always has two digits)."""
+        _month: str = str(month)
+        if len(_month) == 1:  # Add '0' if month has only one digit
+            _month = "0" + _month
+        self.url_parts[4] = _month
+
+    def _set_number(self, number: int) -> None:
+        """Set newsticker number in URL."""
+        self.url_parts[7] = str(number)
+
+    @staticmethod
+    def _is_url_valid(url: str | None) -> bool:
+        """Check whether the passed URL is valid."""
+        if url is None:
+            # None is treated as a valid URL which means the URL doesn't exist
+            return True
+        try:
+            response: requests.models.Response = requests.get(url)
+            response.raise_for_status()  # Raise error for 4xx or 5xx responses
+            return True
+        except requests.exceptions.RequestException:
+            return False

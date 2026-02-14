@@ -82,6 +82,34 @@ class NewstickersImageParser(NewstickersParser):
         # (BytesIO creates a file-like object in memory that PIL can read)
         return Image.open(BytesIO(response.content))
 
+    def get_newsticker(self) -> Newsticker | None:
+        """Return the Newsticker object or return None if no valid image is found."""
+        newstickers_website: NewstickersWebsite = self._get_newstickers_website()
+        image: Image.Image | None = self._get_image()
+        if not image:
+            return None
+
+        raw_text: str = self._get_raw_text_from_image(image)
+        newsticker_string: str = self._get_newsticker_string(raw_text)
+
+        # Set 'image_extraction_invalid' to True and print error message when newsticker could not be read properly
+        image_extraction_invalid: bool = False
+        if not self._is_newsticker_string_valid(newsticker_string):
+            image_extraction_invalid = True
+            print(
+                "> The following image text could not be properly recognized:\n"
+                + f"'{newsticker_string}'\n"
+                + f"from URL '{self.url}'\n",
+                file=sys.stderr,
+            )
+
+        return Newsticker(
+            text=newsticker_string,
+            newstickers_website=newstickers_website,
+            extracted_from_image=True,
+            image_extraction_invalid=image_extraction_invalid,
+        )
+
     @staticmethod
     def _get_raw_text_from_image(image: Image.Image) -> str:
         """Read and return the newsticker's raw text from the image."""
@@ -180,31 +208,3 @@ class NewstickersImageParser(NewstickersParser):
                     return False
 
         return True
-
-    def get_newsticker(self) -> Newsticker | None:
-        """Return the Newsticker object or return None if no valid image is found."""
-        newstickers_website: NewstickersWebsite = self._get_newstickers_website()
-        image: Image.Image | None = self._get_image()
-        if not image:
-            return None
-
-        raw_text: str = self._get_raw_text_from_image(image)
-        newsticker_string: str = self._get_newsticker_string(raw_text)
-
-        # Set 'image_extraction_invalid' to True and print error message when newsticker could not be read properly
-        image_extraction_invalid: bool = False
-        if not self._is_newsticker_string_valid(newsticker_string):
-            image_extraction_invalid = True
-            print(
-                "> The following image text could not be properly recognized:\n"
-                + f"'{newsticker_string}'\n"
-                + f"from URL '{self.url}'\n",
-                file=sys.stderr,
-            )
-
-        return Newsticker(
-            text=newsticker_string,
-            newstickers_website=newstickers_website,
-            extracted_from_image=True,
-            image_extraction_invalid=image_extraction_invalid,
-        )
