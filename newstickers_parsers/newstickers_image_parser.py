@@ -154,26 +154,24 @@ class NewstickersImageParser(NewstickersParser):
         A valid newsticker must have the following format:
             +++ <part1> <part2> ... <partN>: <partN+1> <partN+2> ... +++
         """
-
-        # Newsticker string must consist of at least 3 parts (+++, word, +++)
-        newsticker_parts: list[str] = newsticker_string.split()
-        if len(newsticker_parts) < 3:
+        if not newsticker_string.count(":") == 1:  # There must be only one colon
             return False
 
-        # First and last part must be exactly 1, 2, or 3 pluses
-        pattern: str = r"\+{1,3}"
-        if not (
-            bool(re.fullmatch(pattern, newsticker_parts[0]))
-            and bool(re.fullmatch(pattern, newsticker_parts[-1]))
-        ):
+        # Cut out the text between the '+++'
+        inner_parts: list[str] = newsticker_string.split()[1:-1]
+
+        # Inner parts must be at least 2 (one before and one after the colon)
+        if len(inner_parts) < 2:
             return False
 
-        # Search for colon
-        # The part with the colon needs to be in front of at least two parts, i.e. a word and the +++
-        for part in newsticker_parts[1:-2]:
-            if ":" in part:
-                break
-        else:  # Invalid if no colon found
+        # The colon parts must be in front of at least the one part
+        def get_idx_of_colon_part() -> int:
+            for idx, part in enumerate(inner_parts):
+                if ":" in part:
+                    return idx
+            raise RuntimeError("No colon part in newsticker")
+
+        if not get_idx_of_colon_part() <= len(inner_parts) - 2:
             return False
 
         # Check for unallowed symbols
@@ -202,9 +200,8 @@ class NewstickersImageParser(NewstickersParser):
             "~",
         ]
         for symbol in unallowed_symbols:
-            # Only look for a symbol in the parts between '+++'
-            for newsticker_part in newsticker_parts[1:-1]:
-                if symbol in newsticker_part:
+            for part in inner_parts:
+                if symbol in part:
                     return False
 
         return True
