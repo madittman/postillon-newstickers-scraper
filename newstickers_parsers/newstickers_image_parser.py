@@ -12,13 +12,13 @@ from PIL import Image, ImageOps
 from requests import Response
 
 from exceptions.exceptions import NoValidImageFoundError
-from models.newsticker import Newsticker
-from models.newstickers_website import NewstickersWebsite
-from newstickers_parsers.newstickers_parser import NewstickersParser
+from models.newsticker.newsticker_base import NewstickerBase
+from models.newstickers_website.newstickers_website_base import NewstickersWebsiteBase
+from newstickers_parsers.newstickers_parser_base import NewstickersParserBase
 
 
 @dataclass
-class NewstickersImageParser(NewstickersParser):
+class NewstickersImageParser(NewstickersParserBase):
     """Class for recognizing and extracting the newsticker from the image on the newsticker's website."""
 
     def _get_image_tag(self) -> Tag | None:
@@ -82,9 +82,9 @@ class NewstickersImageParser(NewstickersParser):
         # (BytesIO creates a file-like object in memory that PIL can read)
         return Image.open(BytesIO(response.content))
 
-    def get_newsticker(self) -> Newsticker | None:
-        """Return the Newsticker object or return None if no valid image is found."""
-        newstickers_website: NewstickersWebsite = self._get_newstickers_website()
+    def get_newsticker(self) -> NewstickerBase | None:
+        """Return the NewstickerBase object or return None if no valid image is found."""
+        newstickers_website: NewstickersWebsiteBase = self._get_newstickers_website()
         image: Image.Image | None = self._get_image()
         if not image:
             return None
@@ -103,7 +103,7 @@ class NewstickersImageParser(NewstickersParser):
                 file=sys.stderr,
             )
 
-        return Newsticker(
+        return NewstickerBase(
             text=newsticker_string,
             newstickers_website=newstickers_website,
             extracted_from_image=True,

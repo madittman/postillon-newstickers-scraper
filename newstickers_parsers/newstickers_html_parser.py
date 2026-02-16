@@ -5,14 +5,14 @@ from typing import Generator
 from bs4 import Tag
 
 from exceptions.exceptions import NoNewstickerFoundError
-from models.newsticker import Newsticker
-from models.newstickers_website import NewstickersWebsite
-from newstickers_parsers.newstickers_parser import NewstickersParser
+from models.newsticker.newsticker_base import NewstickerBase
+from models.newstickers_website.newstickers_website_base import NewstickersWebsiteBase
+from newstickers_parsers.newstickers_parser_base import NewstickersParserBase
 
 
 @dataclass
-class NewstickersHtmlParser(NewstickersParser):
-    """Class for extracting and getting Newsticker objects from a URL."""
+class NewstickersHtmlParser(NewstickersParserBase):
+    """Class for extracting and getting NewstickerBase objects from a URL."""
 
     def _extract_newsticker_strings(self) -> list[str]:
         """Return the extracted newstickers from self.soup as a list of strings."""
@@ -41,12 +41,12 @@ class NewstickersHtmlParser(NewstickersParser):
 
         return newsticker_strings
 
-    def get_next_newsticker(self) -> Generator[Newsticker]:
-        """Yield the next Newsticker object."""
-        newstickers_website: NewstickersWebsite = self._get_newstickers_website()
+    def get_next_newsticker(self) -> Generator[NewstickerBase]:
+        """Yield the next NewstickerBase object."""
+        newstickers_website: NewstickersWebsiteBase = self._get_newstickers_website()
         newstickers_strings: list[str] = self._extract_newsticker_strings()
         for newsticker_string in newstickers_strings:
-            newsticker: Newsticker = Newsticker(
+            newsticker: NewstickerBase = NewstickerBase(
                 text=newsticker_string,
                 newstickers_website=newstickers_website,
                 extracted_from_image=False,

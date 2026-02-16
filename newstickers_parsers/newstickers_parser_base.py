@@ -1,9 +1,9 @@
 import re
 import sys
-import time
 from abc import ABC
 from dataclasses import dataclass, field
 from datetime import date, datetime
+from time import sleep
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -27,10 +27,10 @@ class NewstickersParserBase(ABC):
 
     def __post_init__(self) -> None:
         """Call URL and set BeautifulSoup object."""
-        back_off: int = 5
         response: requests.models.Response = requests.get(self.url)
 
         # Sleep for an increasing amount of seconds if there have been too many requests for the URL
+        back_off: int = 5
         while response.status_code == 429:
             response = requests.get(self.url)
             print(
@@ -38,7 +38,7 @@ class NewstickersParserBase(ABC):
                 + f"Sleeping for {back_off} seconds...\n",
                 file=sys.stderr,
             )
-            time.sleep(back_off)
+            sleep(back_off)
             back_off *= 2
 
         # Raise error for 4xx or 5xx responses
