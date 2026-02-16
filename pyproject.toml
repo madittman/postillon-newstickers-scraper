@@ -9,12 +9,15 @@ description = "scrape all Postillon's newstickers from all newsticker's sites."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "beanie>=2.0.1",
     "beautifulsoup4>=4.14.3",
     "black>=26.1.0",
     "isort>=7.0.0",
+    "motor>=3.7.1",
     "mypy>=1.19.1",
     "opencv-python>=4.13.0.92",
     "pillow>=12.1.0",
+    "pydantic>=2.12.5",
     "pytesseract>=0.3.13",
     "pytest>=9.0.2",
     "requests>=2.32.5",
