@@ -14,8 +14,8 @@ NOW: datetime = datetime.now()
 url_builder: UrlBuilder = UrlBuilder()
 url_builder.set_all_params(  # Adjust parameters to set where to start from
     year=2026,
-    month=1,
-    number=2352,
+    month=2,
+    number=2358,
 )
 
 # urls is a dict in the format <newsticker number, URL>
