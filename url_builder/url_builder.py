@@ -1,5 +1,7 @@
+import sys
 from dataclasses import dataclass, field
 from datetime import datetime
+from time import sleep
 
 import requests
 from typing_extensions import Self
@@ -119,6 +121,19 @@ class UrlBuilder:
             return True
         try:
             response: requests.models.Response = requests.get(url)
+
+            # Sleep for an increasing amount of seconds if there have been too many requests for the URL
+            back_off: int = 5
+            while response.status_code == 429:
+                response = requests.get(url)
+                print(
+                    f"> Too many requests for URL '{url}'\n"
+                    + f"Sleeping for {back_off} seconds...\n",
+                    file=sys.stderr,
+                )
+                sleep(back_off)
+                back_off *= 2
+
             response.raise_for_status()  # Raise error for 4xx or 5xx responses
             return True
         except requests.exceptions.RequestException:
