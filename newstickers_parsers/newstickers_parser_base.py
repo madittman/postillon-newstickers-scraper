@@ -13,11 +13,11 @@ from exceptions.exceptions import (
     NoValidDateFoundError,
     NoValidTitleFoundError,
 )
-from models.newstickers_website import NewstickersWebsite
+from models.newstickers_website.newstickers_website_base import NewstickersWebsiteBase
 
 
 @dataclass
-class NewstickersParser(ABC):
+class NewstickersParserBase(ABC):
     """
     Abstract base class for extracting newstickers from different sources.
     """
@@ -98,8 +98,8 @@ class NewstickersParser(ABC):
         # Parse the date string
         return datetime.strptime(date_string, "%d.%m.%y").date()
 
-    def _get_newstickers_website(self) -> NewstickersWebsite:
-        """Return NewstickersWebsite object."""
+    def _get_newstickers_website(self) -> NewstickersWebsiteBase:
+        """Return NewstickersWebsiteBase object."""
         title_string: str = self._get_title_string()
 
         # Extract the newsticker's number from title
@@ -107,7 +107,7 @@ class NewstickersParser(ABC):
 
         date_obj: date = self._get_date()
 
-        return NewstickersWebsite(
+        return NewstickersWebsiteBase(
             number=number,
             title=title_string,
             date=date_obj,

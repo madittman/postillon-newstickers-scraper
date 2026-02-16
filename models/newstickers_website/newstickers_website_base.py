@@ -1,11 +1,11 @@
 """ORM class for a newsticker's website"""
 
-from dataclasses import dataclass
 from datetime import date
 
+from pydantic import BaseModel
 
-@dataclass
-class NewstickersWebsite:
+
+class NewstickersWebsiteBase(BaseModel):
     number: int
     title: str
     date: date
