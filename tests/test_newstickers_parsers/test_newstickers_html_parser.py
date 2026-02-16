@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 
 from bs4 import BeautifulSoup
 
-from models.newstickers_website import NewstickersWebsite
+from models.newstickers_website.newstickers_website_base import NewstickersWebsiteBase
 from newstickers_parsers.newstickers_html_parser import NewstickersHtmlParser
 from tests.data.expected_objects import EXPECTED_NEWSTICKER_STRINGS_BY_WEBSITE
 
@@ -50,12 +50,12 @@ def test_get_newstickers_website() -> None:
     """Test method '_get_newstickers_website' from parent class."""
     for website in WEBSITES:
         mocked_parser: NewstickersHtmlParser = get_mocked_parser(website)
-        newstickers_website: NewstickersWebsite = (
+        newstickers_website: NewstickersWebsiteBase = (
             mocked_parser._get_newstickers_website()
         )
 
         expected_title_string: str = mocked_parser._get_title_string()
-        expected_newstickers_website: NewstickersWebsite = NewstickersWebsite(
+        expected_newstickers_website: NewstickersWebsiteBase = NewstickersWebsiteBase(
             number=mocked_parser._get_number_from_title_string(expected_title_string),
             title=expected_title_string,
             date=mocked_parser._get_date(),
@@ -89,8 +89,8 @@ def test_get_next_newsticker() -> None:
             assert not newsticker.extracted_from_image
             assert newsticker.image_extraction_invalid is None
 
-            # Assert NewstickersWebsite object
-            newstickers_website: NewstickersWebsite = newsticker.newstickers_website
+            # Assert NewstickersWebsiteBase object
+            newstickers_website: NewstickersWebsiteBase = newsticker.newstickers_website
             expected_title_string: str = mocked_parser._get_title_string()
             assert newstickers_website.title == expected_title_string
             assert (

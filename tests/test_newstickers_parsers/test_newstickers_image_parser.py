@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 
 from bs4 import Tag
 
-from models.newsticker import Newsticker
+from models.newsticker.newsticker_base import NewstickerBase
 from newstickers_parsers.newstickers_image_parser import NewstickersImageParser
 from tests.data.expected_objects import (
     EXPECTED_IMAGE_PATH_BY_WEBSITE,
@@ -112,10 +112,10 @@ def test_get_newsticker() -> None:
         # Patch 'requests.get' when it is called from 'get_newsticker' method
         with patch("requests.get") as mock_get:
             mock_get.return_value = mock_response
-            newsticker: Newsticker | None = mocked_parser.get_newsticker()
+            newsticker: NewstickerBase | None = mocked_parser.get_newsticker()
 
-        # Assert Newsticker object
-        expected_newsticker: Newsticker | None = expected_newsticker_by_website(
+        # Assert NewstickerBase object
+        expected_newsticker: NewstickerBase | None = expected_newsticker_by_website(
             Path(website).name, DATA_PATH
         )
         assert newsticker == expected_newsticker

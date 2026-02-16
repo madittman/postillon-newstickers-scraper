@@ -3,8 +3,8 @@
 import os
 from datetime import date
 
-from models.newsticker import Newsticker
-from models.newstickers_website import NewstickersWebsite
+from models.newsticker.newsticker_base import NewstickerBase
+from models.newstickers_website.newstickers_website_base import NewstickersWebsiteBase
 
 EXPECTED_NEWSTICKER_STRINGS_BY_WEBSITE: dict[str, list[str]] = {
     "Newsticker (1).html": [
@@ -66,8 +66,10 @@ EXPECTED_IMAGE_PATH_BY_WEBSITE: dict[str, str | None] = {
 }
 
 
-def expected_newsticker_by_website(website: str, data_path: str) -> Newsticker | None:
-    """Return expected Newsticker object by website."""
+def expected_newsticker_by_website(
+    website: str, data_path: str
+) -> NewstickerBase | None:
+    """Return expected NewstickerBase object by website."""
 
     # The mocked URL is the full path of the HTML file
     full_file_path: str = os.path.join(data_path, "websites", website)
@@ -112,9 +114,9 @@ def expected_newsticker_by_website(website: str, data_path: str) -> Newsticker |
         case _:
             return None
 
-    return Newsticker(
+    return NewstickerBase(
         text=text,
-        newstickers_website=NewstickersWebsite(
+        newstickers_website=NewstickersWebsiteBase(
             number=number,
             title=title,
             date=_date,
