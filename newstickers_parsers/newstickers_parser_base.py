@@ -1,9 +1,7 @@
 import re
-import sys
 from abc import ABC
 from dataclasses import dataclass, field
 from datetime import date, datetime
-from time import sleep
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -13,6 +11,7 @@ from exceptions.exceptions import (
     NoValidDateFoundError,
     NoValidTitleFoundError,
 )
+from helper_functions import get_response_with_retry
 from models.newstickers_website.newstickers_website_base import NewstickersWebsiteBase
 
 
@@ -27,23 +26,7 @@ class NewstickersParserBase(ABC):
 
     def __post_init__(self) -> None:
         """Call URL and set BeautifulSoup object."""
-        response: requests.models.Response = requests.get(self.url)
-
-        # Sleep for an increasing amount of seconds if there have been too many requests for the URL
-        back_off: int = 5
-        while response.status_code == 429:
-            response = requests.get(self.url)
-            print(
-                f"> Too many requests for URL '{self.url}'\n"
-                + f"Sleeping for {back_off} seconds...\n",
-                file=sys.stderr,
-            )
-            sleep(back_off)
-            back_off *= 2
-
-        # Raise error for 4xx or 5xx responses
-        response.raise_for_status()
-
+        response: requests.models.Response = get_response_with_retry(self.url)
         self.soup: BeautifulSoup = BeautifulSoup(response.content, "html.parser")
         if not self.soup.find("div", class_="post-body"):
             raise NoPostBodyDivFoundError(

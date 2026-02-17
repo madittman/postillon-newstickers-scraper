@@ -1,3 +1,9 @@
+class MaxRetriesReachedError(Exception):
+    """Raised when URL responses with status code '429 Too Many Requests' after max retries."""
+
+    pass
+
+
 class NoPostBodyDivFoundError(Exception):
     """Raised when 'post-body' <div> tag could not be found on newsticker's website."""
 
